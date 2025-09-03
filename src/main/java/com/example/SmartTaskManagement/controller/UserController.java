@@ -1,9 +1,11 @@
 package com.example.SmartTaskManagement.controller;
 
-import com.example.SmartTaskManagement.dto.UserDTO;
+import com.example.SmartTaskManagement.dto.UserRequestDTO;
 import com.example.SmartTaskManagement.dto.UserResponseDTO;
 import com.example.SmartTaskManagement.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,29 +17,33 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping()
-    public List<UserResponseDTO> getUsers() {
+    public ResponseEntity<List<UserResponseDTO>> getUsers() {
         List<UserResponseDTO> users = userService.getUsers();
-        return users;
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
-    public UserResponseDTO getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
         UserResponseDTO users = userService.getUserById(id);
-        return users;
+        return ResponseEntity.ok(users);
     }
 
     @PostMapping()
-    public UserResponseDTO createUser(@RequestBody UserDTO dto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponseDTO createUser(@RequestBody UserRequestDTO dto) {
         return userService.createUser(dto);
     }
 
     @PutMapping("/{id}")
-    public UserResponseDTO updateUser(@RequestBody UserDTO dto, @PathVariable Long id) {
+    @ResponseStatus(HttpStatus.OK)
+    public UserResponseDTO updateUser(@RequestBody UserRequestDTO dto, @PathVariable Long id) {
         return userService.updateUser(id, dto);
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
+
 }

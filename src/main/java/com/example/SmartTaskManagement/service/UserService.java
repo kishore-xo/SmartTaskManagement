@@ -1,68 +1,68 @@
 package com.example.SmartTaskManagement.service;
 
-import com.example.SmartTaskManagement.dto.UserDTO;
+import com.example.SmartTaskManagement.dto.UserRequestDTO;
 import com.example.SmartTaskManagement.dto.UserResponseDTO;
-import com.example.SmartTaskManagement.exception.UserNotFoundException;
 import com.example.SmartTaskManagement.model.Users;
 import com.example.SmartTaskManagement.repo.UsersRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UsersRepo usersRepo;
 
+    private UserResponseDTO mapToResponseDTO(Users users) {
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.setId(users.getId());
+        dto.setUsername(users.getUsername());
+        dto.setEmail(users.getEmail());
+        dto.setRole(users.getRole().name());
+        return dto;
+    }
+
     public List<UserResponseDTO> getUsers() {
-        return usersRepo.findAll().stream()
-                .map(users -> new UserResponseDTO(
-                        users.getId(),
-                        users.getUsername(),
-                        users.getEmail(),
-                        users.getRole()))
-                .toList();
+        return usersRepo.findAll()
+                .stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
     }
 
     public UserResponseDTO getUserById(Long id) {
-        Users users = usersRepo.findById(id).orElse(null);
-        assert users != null;
-        return new UserResponseDTO(users.getId(),
-                users.getUsername(),
-                users.getEmail(),
-                users.getRole());
+        Users users = usersRepo.findById(id).orElseThrow(() -> new RuntimeException("User not found with id" + id));
+        return mapToResponseDTO(users);
     }
 
-    public UserResponseDTO createUser(UserDTO dto) {
+    public UserResponseDTO createUser(UserRequestDTO dto) {
         Users users = new Users();
         users.setUsername(dto.getUsername());
         users.setPassword(dto.getPassword());
         users.setEmail(dto.getEmail());
         users.setRole(dto.getRole());
-        users.setTasks(new HashSet<>());
-        users.setTeams(new HashSet<>());
-        usersRepo.save(users);
-        return new UserResponseDTO(users.getId(), users.getUsername(), users.getEmail(), users.getRole());
+
+        Users saved = usersRepo.save(users);
+        return mapToResponseDTO(saved);
     }
 
-    public UserResponseDTO updateUser(Long id, UserDTO dto) {
-        Optional<Users> users = usersRepo.findById(id);
-        if (users.isPresent()) {
-            Users existUser = users.get();
-            existUser.setUsername(dto.getUsername());
-            existUser.setPassword(dto.getPassword());
-            existUser.setEmail(dto.getEmail());
-            existUser.setRole(dto.getRole());
-            usersRepo.save(existUser);
-            return new UserResponseDTO(existUser.getId(),
-                    existUser.getUsername(),
-                    existUser.getEmail(),
-                    existUser.getRole());
+    public UserResponseDTO updateUser(Long id, UserRequestDTO dto) {
+        Optional<Users> optionalUsers = usersRepo.findById(id);
+
+        if (optionalUsers.isEmpty()) {
+            throw new RuntimeException("User with id " + id + " is not found");
         }
-        throw new UserNotFoundException("User with id " + id + " is Not Found");
+
+        Users users = optionalUsers.get();
+        users.setUsername(dto.getUsername());
+        users.setPassword(dto.getPassword());
+        users.setEmail(dto.getEmail());
+        users.setRole(dto.getRole());
+
+        Users updated = usersRepo.save(users);
+        return mapToResponseDTO(updated);
     }
 
     public void deleteUser(Long id) {

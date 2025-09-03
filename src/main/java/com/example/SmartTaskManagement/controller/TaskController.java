@@ -1,6 +1,7 @@
 package com.example.SmartTaskManagement.controller;
 
-import com.example.SmartTaskManagement.dto.TaskDTO;
+import com.example.SmartTaskManagement.dto.TaskRequestDTO;
+import com.example.SmartTaskManagement.dto.TaskResponseDTO;
 import com.example.SmartTaskManagement.model.Task;
 import com.example.SmartTaskManagement.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -15,28 +16,27 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping()
-    public List<Task> getTasks() {
-        List<Task> tasks = taskService.getTasks();
-        return tasks;
+    public List<TaskResponseDTO> getTasks() {
+        return taskService.getTasks();
     }
 
     @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable Long id) {
+    public TaskResponseDTO getTaskById(@PathVariable Long id) {
         return taskService.getTaskById(id);
     }
 
     @PostMapping()
-    public Task createTask(@RequestBody TaskDTO taskDTO) {
+    public TaskResponseDTO createTask(@RequestBody TaskRequestDTO taskDTO) {
         return taskService.createTask(taskDTO);
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@RequestBody TaskDTO taskDTO, @PathVariable Long id) {
+    public TaskResponseDTO updateTask(@RequestBody TaskRequestDTO taskDTO, @PathVariable Long id) {
         return taskService.updateTask(id, taskDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable Long id){
+    public void deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
     }
 }

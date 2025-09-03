@@ -1,5 +1,6 @@
 package com.example.SmartTaskManagement.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -27,8 +29,10 @@ public class Team {
             joinColumns = @JoinColumn(name = "teamId"),
             inverseJoinColumns = @JoinColumn(name = "userId")
     )
+    @JsonIgnore
     private Set<Users> users = new HashSet<>();
 
-    @OneToMany(mappedBy = "assignedTeam", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "assignedTeam")
+    @JsonIgnore
     private Set<Task> tasks = new HashSet<>();
 }
