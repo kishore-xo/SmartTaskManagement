@@ -9,6 +9,7 @@ import com.example.SmartTaskManagement.model.Users;
 import com.example.SmartTaskManagement.repo.TaskRepo;
 import com.example.SmartTaskManagement.repo.TeamRepo;
 import com.example.SmartTaskManagement.repo.UsersRepo;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,12 +33,13 @@ public class TaskService {
         taskResponseDTO.setStatus(task.getStatus());
         taskResponseDTO.setPriority(task.getPriority());
         taskResponseDTO.setDueDate(task.getDueDate());
+
         if (task.getAssignedUser() != null) {
-            taskResponseDTO.setUsername(task.getAssignedUser().getUsername());
-        } else taskResponseDTO.setUsername(null);
+            taskResponseDTO.setAssignedUser(task.getAssignedUser().getUsername());
+        } else taskResponseDTO.setAssignedUser(null);
         if (task.getAssignedTeam() != null) {
-            taskResponseDTO.setTeamName(task.getAssignedTeam().getName());
-        } else taskResponseDTO.setTeamName(null);
+            taskResponseDTO.setAssignedTeam(task.getAssignedTeam().getName());
+        } else taskResponseDTO.setAssignedTeam(null);
         return taskResponseDTO;
     }
 
@@ -53,17 +55,18 @@ public class TaskService {
         return mapToTaskDTO(task);
     }
 
+    @Transactional
     public TaskResponseDTO createTask(TaskRequestDTO taskDTO) {
         Users users = null;
         if (taskDTO.getAssignedUser() != null) {
-            users = usersRepo.findById(taskDTO.getAssignedUser())
-                    .orElseThrow(() -> new RuntimeException("User not found with id " + taskDTO.getAssignedUser()));
+            users = usersRepo.findByUsername(taskDTO.getAssignedUser())
+                    .orElseThrow(() -> new RuntimeException("User not found with name " + taskDTO.getAssignedUser()));
         }
 
         Team team = null;
         if (taskDTO.getAssignedTeam() != null) {
-            team = teamRepo.findById(taskDTO.getAssignedTeam())
-                    .orElseThrow(() -> new RuntimeException("Team not found with id " + taskDTO.getAssignedTeam()));
+            team = teamRepo.findTeamByName(taskDTO.getAssignedTeam())
+                    .orElseThrow(() -> new RuntimeException("Team not found with name " + taskDTO.getAssignedTeam()));
         }
 
         Task task = new Task();
@@ -73,11 +76,15 @@ public class TaskService {
         task.setPriority(taskDTO.getPriority());
         task.setDueDate(taskDTO.getDueDate());
         task.setAssignedUser(users);
-        task.setAssignedTeam(team);
+        if (team != null) {
+            task.setAssignedTeam(team);
+            team.getTasks().add(task);
+        }
         Task createdTask = taskRepo.save(task);
         return mapToTaskDTO(createdTask);
     }
 
+    @Transactional
     public TaskResponseDTO updateTask(Long id, TaskRequestDTO taskDTO) {
         Optional<Task> optionalTask = taskRepo.findById(id);
 
@@ -93,15 +100,16 @@ public class TaskService {
         task.setDueDate(taskDTO.getDueDate());
 
         if (taskDTO.getAssignedUser() != null) {
-            Users users = usersRepo.findById(taskDTO.getAssignedUser())
+            Users users = usersRepo.findByUsername(taskDTO.getAssignedUser())
                     .orElseThrow(() -> new RuntimeException("User not found in id " + taskDTO.getAssignedUser()));
             task.setAssignedUser(users);
         }
 
         if (taskDTO.getAssignedTeam() != null) {
-            Team team = teamRepo.findById(taskDTO.getAssignedTeam())
+            Team team = teamRepo.findTeamByName(taskDTO.getAssignedTeam())
                     .orElseThrow(() -> new RuntimeException("Team not found in id " + taskDTO.getAssignedTeam()));
             task.setAssignedTeam(team);
+            team.getTasks().add(task);
         }
 
         Task updatedTask = taskRepo.save(task);

@@ -25,7 +25,7 @@ public class TaskRequestDTO {
     @NotNull(message = "DueDate is required")
     private LocalDate dueDate;
 
-    private Long assignedUser;
+    private String assignedUser;
 
-    private Long assignedTeam;
+    private String assignedTeam;
 }

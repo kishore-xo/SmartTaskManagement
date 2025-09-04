@@ -3,9 +3,7 @@ package com.example.SmartTaskManagement.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,11 +34,15 @@ public class Users {
     @Column(name = "ROLE", nullable = false)
     private Role role;
 
-    @OneToMany( mappedBy = "assignedUser")
+    @OneToMany(mappedBy = "assignedUser")
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Task> tasks = new HashSet<>();
 
     @ManyToMany(mappedBy = "users")
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Team> teams = new HashSet<>();
 }

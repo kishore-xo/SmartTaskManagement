@@ -2,7 +2,6 @@ package com.example.SmartTaskManagement.controller;
 
 import com.example.SmartTaskManagement.dto.TaskRequestDTO;
 import com.example.SmartTaskManagement.dto.TaskResponseDTO;
-import com.example.SmartTaskManagement.model.Task;
 import com.example.SmartTaskManagement.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/tasks")
+@RequestMapping("/task")
 public class TaskController {
     private final TaskService taskService;
 

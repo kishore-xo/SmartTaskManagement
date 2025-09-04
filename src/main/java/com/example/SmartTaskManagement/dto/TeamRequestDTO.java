@@ -9,5 +9,5 @@ import java.util.Set;
 public class TeamRequestDTO {
     @NotBlank(message = "Name is required")
     private String name;
-    private Set<Long> usersId;
+    private Set<String> assignedUser;
 }

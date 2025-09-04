@@ -17,6 +17,6 @@ public class TaskResponseDTO {
     private TaskStatus status;
     private String priority;
     private LocalDate dueDate;
-    private String username;
-    private String teamName;
+    private String assignedUser;
+    private String assignedTeam;
 }
