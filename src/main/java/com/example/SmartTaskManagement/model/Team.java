@@ -7,7 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -34,5 +36,15 @@ public class Team {
 
     @OneToMany(mappedBy = "assignedTeam")
     @JsonIgnore
-    private Set<Task> tasks = new HashSet<>();
+    private List<Task> tasks = new ArrayList<>();
+
+    public void addTask(Task task) {
+        this.tasks.add(task);
+        task.setAssignedTeam(this);
+    }
+
+    public void removeTask(Task task) {
+        this.tasks.remove(task);
+        task.setAssignedTeam(null);
+    }
 }

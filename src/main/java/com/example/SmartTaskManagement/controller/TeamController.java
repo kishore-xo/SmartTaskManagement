@@ -43,6 +43,6 @@ public class TeamController {
     @ResponseStatus(HttpStatus.OK)
     public String deleteTeam(@PathVariable String name){
         teamService.deleteTeam(name);
-        return "Team deleted Successfully";
+        return "Team Successfully deleted: "+name;
     }
 }

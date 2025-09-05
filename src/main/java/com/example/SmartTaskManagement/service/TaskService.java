@@ -78,7 +78,7 @@ public class TaskService {
         task.setAssignedUser(users);
         if (team != null) {
             task.setAssignedTeam(team);
-            team.getTasks().add(task);
+            team.addTask(task);
         }
         Task createdTask = taskRepo.save(task);
         return mapToTaskDTO(createdTask);
@@ -109,7 +109,7 @@ public class TaskService {
             Team team = teamRepo.findTeamByName(taskDTO.getAssignedTeam())
                     .orElseThrow(() -> new RuntimeException("Team not found in id " + taskDTO.getAssignedTeam()));
             task.setAssignedTeam(team);
-            team.getTasks().add(task);
+            team.addTask(task);
         }
 
         Task updatedTask = taskRepo.save(task);

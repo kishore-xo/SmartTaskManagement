@@ -5,6 +5,7 @@ import com.example.SmartTaskManagement.dto.UserResponseDTO;
 import com.example.SmartTaskManagement.model.Users;
 import com.example.SmartTaskManagement.repo.UsersRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UsersRepo usersRepo;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private UserResponseDTO mapToResponseDTO(Users users) {
         UserResponseDTO dto = new UserResponseDTO();
@@ -40,7 +42,7 @@ public class UserService {
     public UserResponseDTO createUser(UserRequestDTO dto) {
         Users users = new Users();
         users.setUsername(dto.getUsername());
-        users.setPassword(dto.getPassword());
+        users.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         users.setEmail(dto.getEmail());
         users.setRole(dto.getRole());
 
@@ -57,7 +59,7 @@ public class UserService {
 
         Users users = optionalUsers.get();
         users.setUsername(dto.getUsername());
-        users.setPassword(dto.getPassword());
+        users.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         users.setEmail(dto.getEmail());
         users.setRole(dto.getRole());
 

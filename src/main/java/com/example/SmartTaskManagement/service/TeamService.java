@@ -8,9 +8,11 @@ import com.example.SmartTaskManagement.model.Users;
 import com.example.SmartTaskManagement.repo.TaskRepo;
 import com.example.SmartTaskManagement.repo.TeamRepo;
 import com.example.SmartTaskManagement.repo.UsersRepo;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -89,7 +91,14 @@ public class TeamService {
         return mapToTeamDTO(team);
     }
 
+    @Transactional
     public void deleteTeam(String name) {
-        teamRepo.deleteByName(name);
+        Team team = teamRepo.findTeamByName(name)
+                .orElseThrow(() -> new RuntimeException("Team with a name " + name + " is not Found"));
+
+        for (Task task : new ArrayList<>(team.getTasks())) {
+            team.removeTask(task);
+        }
+        teamRepo.delete(team);
     }
 }
