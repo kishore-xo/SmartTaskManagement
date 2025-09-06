@@ -2,6 +2,7 @@ package com.example.SmartTaskManagement.service;
 
 import com.example.SmartTaskManagement.dto.UserRequestDTO;
 import com.example.SmartTaskManagement.dto.UserResponseDTO;
+import com.example.SmartTaskManagement.model.Role;
 import com.example.SmartTaskManagement.model.Users;
 import com.example.SmartTaskManagement.repo.UsersRepo;
 import lombok.RequiredArgsConstructor;
@@ -70,4 +71,5 @@ public class UserService {
     public void deleteUser(Long id) {
         usersRepo.deleteById(id);
     }
+
 }
