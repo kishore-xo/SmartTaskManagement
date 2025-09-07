@@ -3,6 +3,7 @@ package com.example.SmartTaskManagement.service;
 import com.example.SmartTaskManagement.dto.TaskRequestDTO;
 import com.example.SmartTaskManagement.dto.TaskResponseDTO;
 import com.example.SmartTaskManagement.exception.TaskNotFoundException;
+import com.example.SmartTaskManagement.exception.UserNotFoundException;
 import com.example.SmartTaskManagement.model.Task;
 import com.example.SmartTaskManagement.model.Team;
 import com.example.SmartTaskManagement.model.Users;
@@ -51,7 +52,7 @@ public class TaskService {
     }
 
     public TaskResponseDTO getTaskById(Long id) {
-        Task task = taskRepo.findById(id).orElseThrow(() -> new RuntimeException("NO Task with id" + id + " is found"));
+        Task task = taskRepo.findById(id).orElseThrow(() -> new TaskNotFoundException("NO Task with id" + id + " is found"));
         return mapToTaskDTO(task);
     }
 
@@ -60,7 +61,7 @@ public class TaskService {
         Users users = null;
         if (taskDTO.getAssignedUser() != null) {
             users = usersRepo.findByUsername(taskDTO.getAssignedUser())
-                    .orElseThrow(() -> new RuntimeException("User not found with name " + taskDTO.getAssignedUser()));
+                    .orElseThrow(() -> new UserNotFoundException("User not found with name " + taskDTO.getAssignedUser()));
         }
 
         Team team = null;
@@ -101,7 +102,7 @@ public class TaskService {
 
         if (taskDTO.getAssignedUser() != null) {
             Users users = usersRepo.findByUsername(taskDTO.getAssignedUser())
-                    .orElseThrow(() -> new RuntimeException("User not found in id " + taskDTO.getAssignedUser()));
+                    .orElseThrow(() -> new UserNotFoundException("User not found in id " + taskDTO.getAssignedUser()));
             task.setAssignedUser(users);
         }
 

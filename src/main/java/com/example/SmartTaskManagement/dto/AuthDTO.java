@@ -1,6 +1,5 @@
 package com.example.SmartTaskManagement.dto;
 
-import com.example.SmartTaskManagement.model.Role;
 import lombok.Data;
 
 @Data

@@ -6,8 +6,6 @@ import com.example.SmartTaskManagement.dto.UserResponseDTO;
 import com.example.SmartTaskManagement.model.Role;
 import com.example.SmartTaskManagement.service.UserService;
 import com.example.SmartTaskManagement.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,12 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
-    private UserService userService;
+
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final UserService userService;
+
+    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserService userService) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+        this.userService = userService;
+    }
 
     @PostMapping("/login")
     public String login(@RequestBody AuthDTO authDTO) {
@@ -34,7 +36,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public UserResponseDTO register(@RequestBody UserRequestDTO userRequestDTO){
+    public UserResponseDTO register(@RequestBody UserRequestDTO userRequestDTO) {
         userRequestDTO.setRole(Role.USER);
         return userService.createUser(userRequestDTO);
     }

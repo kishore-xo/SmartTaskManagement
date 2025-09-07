@@ -2,7 +2,7 @@ package com.example.SmartTaskManagement.service;
 
 import com.example.SmartTaskManagement.dto.UserRequestDTO;
 import com.example.SmartTaskManagement.dto.UserResponseDTO;
-import com.example.SmartTaskManagement.model.Role;
+import com.example.SmartTaskManagement.exception.UserNotFoundException;
 import com.example.SmartTaskManagement.model.Users;
 import com.example.SmartTaskManagement.repo.UsersRepo;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class UserService {
     }
 
     public UserResponseDTO getUserById(Long id) {
-        Users users = usersRepo.findById(id).orElseThrow(() -> new RuntimeException("User not found with id" + id));
+        Users users = usersRepo.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id" + id));
         return mapToResponseDTO(users);
     }
 
@@ -55,7 +55,7 @@ public class UserService {
         Optional<Users> optionalUsers = usersRepo.findById(id);
 
         if (optionalUsers.isEmpty()) {
-            throw new RuntimeException("User with id " + id + " is not found");
+            throw new UserNotFoundException("User with id " + id + " is not found");
         }
 
         Users users = optionalUsers.get();

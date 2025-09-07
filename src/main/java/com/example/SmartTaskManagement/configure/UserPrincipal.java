@@ -6,13 +6,19 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public record UserPrincipal(Users users) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + users.getRole().name()));
+
+        Set<SimpleGrantedAuthority> simpleGrantedAuthorities = new HashSet<>();
+        simpleGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + users.getRole().name()));
+        users.getRole().getPermissions().forEach(permission ->
+                simpleGrantedAuthorities.add(new SimpleGrantedAuthority(permission)));
+        return simpleGrantedAuthorities;
     }
 
     @Override

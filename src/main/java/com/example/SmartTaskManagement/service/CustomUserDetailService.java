@@ -1,6 +1,7 @@
 package com.example.SmartTaskManagement.service;
 
 import com.example.SmartTaskManagement.configure.UserPrincipal;
+import com.example.SmartTaskManagement.exception.UserNotFoundException;
 import com.example.SmartTaskManagement.model.Users;
 import com.example.SmartTaskManagement.repo.UsersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Users users = usersRepo.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return new UserPrincipal(users);
     }
 }
