@@ -10,6 +10,8 @@ import com.example.SmartTaskManagement.repo.TeamRepo;
 import com.example.SmartTaskManagement.repo.UsersRepo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,11 +45,9 @@ public class TeamService {
         return dto;
     }
 
-    public List<TeamResponseDTO> getTeams() {
-        return teamRepo.findAllWithUsersAndTasks()
-                .stream()
-                .map(this::mapToTeamDTO)
-                .collect(Collectors.toList());
+    public Page<TeamResponseDTO> getTeams(Pageable pageable) {
+        return teamRepo.findAllWithUsersAndTasks(pageable)
+                .map(this::mapToTeamDTO);
     }
 
     public TeamResponseDTO getTeamByName(String name) {

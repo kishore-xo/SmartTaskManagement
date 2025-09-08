@@ -4,10 +4,12 @@ import com.example.SmartTaskManagement.dto.TaskRequestDTO;
 import com.example.SmartTaskManagement.dto.TaskResponseDTO;
 import com.example.SmartTaskManagement.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,8 +19,8 @@ public class TaskController {
 
     @GetMapping()
     @PreAuthorize("hasAuthority('TASK_READ')")
-    public List<TaskResponseDTO> getTasks() {
-        return taskService.getTasks();
+    public Page<TaskResponseDTO> getTasks(@PageableDefault(size = 3, sort = "dueDate", direction = Sort.Direction.ASC) Pageable pageable) {
+        return taskService.getTasks(pageable);
     }
 
     @GetMapping("/{id}")

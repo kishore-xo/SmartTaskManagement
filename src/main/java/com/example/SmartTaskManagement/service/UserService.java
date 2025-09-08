@@ -36,7 +36,7 @@ public class UserService {
     }
 
     public UserResponseDTO getUserById(Long id) {
-        Users users = usersRepo.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id" + id));
+        Users users = usersRepo.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
         return mapToResponseDTO(users);
     }
 

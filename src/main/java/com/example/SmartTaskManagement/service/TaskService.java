@@ -12,11 +12,11 @@ import com.example.SmartTaskManagement.repo.TeamRepo;
 import com.example.SmartTaskManagement.repo.UsersRepo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +25,7 @@ public class TaskService {
     private final UsersRepo usersRepo;
     private final TeamRepo teamRepo;
     private final TaskRepo taskRepo;
+    private final EmailService emailService;
 
     private TaskResponseDTO mapToTaskDTO(Task task) {
         TaskResponseDTO taskResponseDTO = new TaskResponseDTO();
@@ -44,11 +45,9 @@ public class TaskService {
         return taskResponseDTO;
     }
 
-    public List<TaskResponseDTO> getTasks() {
-        return taskRepo.findAll()
-                .stream()
-                .map(this::mapToTaskDTO)
-                .collect(Collectors.toList());
+    public Page<TaskResponseDTO> getTasks(Pageable pageable) {
+        return taskRepo.findAll(pageable)
+                .map(this::mapToTaskDTO);
     }
 
     public TaskResponseDTO getTaskById(Long id) {
@@ -80,6 +79,9 @@ public class TaskService {
         if (team != null) {
             task.setAssignedTeam(team);
             team.addTask(task);
+        }
+        if (users != null) {
+            emailService.sendTaskMail(users.getEmail(), task.getTitle(),task.getDescription());
         }
         Task createdTask = taskRepo.save(task);
         return mapToTaskDTO(createdTask);
