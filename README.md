@@ -33,8 +33,8 @@ SmartTaskManagement is a RESTful web application for managing tasks, users, and 
 
 ## Prerequisites
 
-- Java 17+
-- Maven 3.8+
+- Java 21+
+- Maven 3.9+
 - (Optional) Docker
 
 ## Getting Started
